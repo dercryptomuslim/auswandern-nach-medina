@@ -10,9 +10,18 @@ import {
   ShieldCheck, 
   ArrowRight, 
   Play,
-  Heart
+  Heart,
+  Star,
+  CheckCircle2
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+// --- Utility ---
+function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 
 // --- Components ---
 
@@ -21,32 +30,67 @@ function Button({
   variant = "primary", 
   className = "", 
   ...props 
-}: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "secondary" | "outline" }) {
-  const baseStyle = "px-8 py-3 rounded-md transition-all duration-300 font-medium text-sm tracking-wide flex items-center justify-center gap-2";
+}: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "secondary" | "outline" | "ghost" }) {
   const variants = {
-    primary: "bg-primary text-white hover:bg-primary-hover shadow-md hover:shadow-lg",
-    secondary: "bg-secondary text-white hover:bg-secondary-hover shadow-sm",
-    outline: "border border-primary text-primary hover:bg-primary/5",
+    primary: "bg-[#1A3C34] text-[#FDFBF7] hover:bg-[#142F29] shadow-lg hover:shadow-xl hover:-translate-y-0.5",
+    secondary: "bg-[#C5A065] text-white hover:bg-[#B08D55] shadow-md hover:shadow-lg",
+    outline: "border-2 border-[#1A3C34] text-[#1A3C34] hover:bg-[#1A3C34]/5",
+    ghost: "bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20",
   };
 
   return (
-    <button className={`${baseStyle} ${variants[variant]} ${className}`} {...props}>
+    <button 
+      className={cn(
+        "px-8 py-4 rounded-xl transition-all duration-300 font-medium text-base tracking-wide flex items-center justify-center gap-2 active:scale-95",
+        variants[variant],
+        className
+      )} 
+      {...props}
+    >
       {children}
     </button>
   );
 }
 
-function Section({ 
+function BentoCard({ 
   children, 
   className = "", 
-  id = "" 
+  title, 
+  subtitle,
+  icon: Icon
 }: { 
-  children: React.ReactNode; 
-  className?: string; 
-  id?: string;
+  children?: React.ReactNode; 
+  className?: string;
+  title?: string;
+  subtitle?: string;
+  icon?: React.ElementType;
 }) {
   return (
-    <section id={id} className={`py-20 px-6 md:px-12 lg:px-24 ${className}`}>
+    <div className={cn(
+      "bg-white rounded-3xl p-8 border border-[#1A3C34]/5 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col h-full",
+      className
+    )}>
+      {(Icon || title) && (
+        <div className="mb-6">
+          {Icon && (
+            <div className="w-12 h-12 bg-[#1A3C34]/5 rounded-2xl flex items-center justify-center text-[#1A3C34] mb-4">
+              <Icon size={24} />
+            </div>
+          )}
+          {title && <h3 className="text-xl font-serif text-[#1A3C34] font-medium">{title}</h3>}
+          {subtitle && <p className="text-[#6B7C76] text-sm mt-2 leading-relaxed">{subtitle}</p>}
+        </div>
+      )}
+      <div className="flex-1">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function Section({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <section className={cn("py-24 px-6 md:px-12 lg:px-24", className)}>
       <div className="max-w-7xl mx-auto">
         {children}
       </div>
@@ -57,10 +101,10 @@ function Section({
 function FadeIn({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.6, delay, ease: "easeOut" }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.7, delay, ease: [0.21, 0.47, 0.32, 0.98] }}
     >
       {children}
     </motion.div>
@@ -71,199 +115,235 @@ function FadeIn({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 
 export default function LandingPage() {
   return (
-    <main className="min-h-screen flex flex-col">
+    <main className="min-h-screen flex flex-col bg-[#FDFBF7] selection:bg-[#C5A065] selection:text-white">
       
-      {/* SECTION 1: HERO */}
-      <div className="relative min-h-[90vh] flex items-center justify-center text-center px-6 overflow-hidden">
-        {/* Background - placeholder for Medina image */}
-        <div className="absolute inset-0 bg-[#1A3C34] z-0">
-          <div className="absolute inset-0 opacity-40 bg-[url('https://images.unsplash.com/photo-1565552629477-ff441f77d338?q=80&w=2574&auto=format&fit=crop')] bg-cover bg-center mix-blend-overlay"></div>
-          <div className="absolute inset-0 bg-gradient-to-b from-[#1A3C34]/80 via-[#1A3C34]/60 to-[#1A3C34]/90"></div>
-        </div>
-
-        <div className="relative z-10 max-w-4xl mx-auto text-white space-y-8 pt-20">
+      {/* SECTION 1: MODERN SPLIT HERO */}
+      <div className="relative min-h-[95vh] grid lg:grid-cols-2">
+        {/* Left: Content */}
+        <div className="flex flex-col justify-center px-6 md:px-12 lg:px-24 py-20 lg:py-0 order-2 lg:order-1 z-10">
           <FadeIn>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif leading-tight mb-6">
-              Medina im Herzen. <br />
-              <span className="text-secondary">Saudi-Arabien als Zukunft.</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1A3C34]/5 text-[#1A3C34] text-sm font-medium mb-8 w-fit">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#C5A065] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#C5A065]"></span>
+              </span>
+              Community für bewusste Hijrah
+            </div>
+            
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif leading-[1.1] text-[#1A3C34] mb-8">
+              Medina im Herzen.<br/>
+              <span className="text-[#C5A065] italic">Zukunft</span> in der Hand.
             </h1>
-          </FadeIn>
-          
-          <FadeIn delay={0.2}>
-            <p className="text-lg md:text-xl text-gray-200 leading-relaxed max-w-2xl mx-auto font-light">
-              Eine Community für Muslime, die Hijrah ernst nehmen 
-              und Verantwortung für ihre Familie und ihre Zukunft übernehmen wollen.
+            
+            <p className="text-xl text-[#6B7C76] leading-relaxed max-w-xl mb-10 font-light">
+              Keine Flucht, sondern ein geplanter Aufbruch. 
+              Tritt der exklusiven Skool-Community für Muslime bei, die Verantwortung übernehmen.
             </p>
-          </FadeIn>
 
-          <FadeIn delay={0.4}>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
-              <Button variant="secondary" className="w-full sm:w-auto text-base py-4">
-                Zur Community
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button className="w-full sm:w-auto">
+                Zur Community beitreten
               </Button>
-              <Button variant="outline" className="w-full sm:w-auto text-base py-4 border-white text-white hover:bg-white/10">
+              <Button variant="outline" className="w-full sm:w-auto">
                 Mehr erfahren
               </Button>
             </div>
+
+            <div className="mt-12 flex items-center gap-4 text-sm text-[#6B7C76]">
+              <div className="flex -space-x-3">
+                {[1,2,3,4].map(i => (
+                  <div key={i} className="w-10 h-10 rounded-full border-2 border-[#FDFBF7] bg-gray-200 flex items-center justify-center text-xs overflow-hidden">
+                    <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i}`} alt="Avatar" />
+                  </div>
+                ))}
+              </div>
+              <p>Bereits 500+ Mitglieder</p>
+            </div>
           </FadeIn>
+        </div>
+
+        {/* Right: Visual */}
+        <div className="relative h-[50vh] lg:h-auto order-1 lg:order-2 overflow-hidden bg-[#1A3C34]">
+          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1565552629477-ff441f77d338?q=80&w=2574&auto=format&fit=crop')] bg-cover bg-center opacity-60 mix-blend-overlay"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1A3C34] via-transparent to-transparent lg:bg-gradient-to-l"></div>
+          
+          {/* Floating Glass Card */}
+          <motion.div 
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.5, duration: 1 }}
+            className="absolute bottom-12 left-12 right-12 lg:bottom-24 lg:left-24 lg:right-auto lg:w-80 bg-white/10 backdrop-blur-xl border border-white/20 p-6 rounded-2xl shadow-2xl text-white hidden md:block"
+          >
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-[#C5A065] rounded-xl">
+                <MapPin size={24} className="text-white" />
+              </div>
+              <div>
+                <p className="text-xs text-gray-300 uppercase tracking-wider mb-1">Nächstes Ziel</p>
+                <p className="font-serif text-xl">Al Madinah</p>
+                <p className="text-sm text-gray-300 mt-2">"Der beste Ort für diejenigen, die Ruhe suchen."</p>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </div>
 
-      {/* SECTION 2: Worum es hier geht */}
-      <Section className="bg-surface text-center">
-        <FadeIn>
-          <div className="max-w-3xl mx-auto space-y-6">
-            <h2 className="text-3xl md:text-4xl font-serif text-primary mb-6">Worum es hier geht</h2>
-            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-              Diese Plattform richtet sich an Muslime, die über eine Auswanderung
-              nach Saudi-Arabien nachdenken – insbesondere nach Medina.
-              Nicht als Traum, sondern als bewusste Entscheidung.
-              Der Kern der Seite ist eine geschlossene Skool Community
-              für Austausch, Orientierung und ehrliche Erfahrungen.
+      {/* SECTION 2: BENTO GRID FEATURES */}
+      <Section>
+        <div className="text-center max-w-3xl mx-auto mb-20">
+          <FadeIn>
+            <h2 className="text-3xl md:text-5xl font-serif text-[#1A3C34] mb-6">Alles für deinen Weg.</h2>
+            <p className="text-lg text-[#6B7C76]">
+              Struktur, Wissen und Netzwerk. Wir haben die Community so aufgebaut, 
+              dass sie dir echte Antworten auf echte Fragen gibt.
             </p>
-          </div>
-        </FadeIn>
-      </Section>
+          </FadeIn>
+        </div>
 
-      {/* SECTION 3: Für wen diese Community ist */}
-      <Section className="bg-accent/30">
-        <FadeIn>
-          <h2 className="text-3xl font-serif text-primary text-center mb-16">Für wen diese Community ist</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { title: "Muslime mit Vision", desc: "Die Hijrah mit Verstand, Iman und langfristiger Planung verbinden." },
-              { title: "Familien", desc: "Die Verantwortung übernehmen und eine sichere Umgebung für ihre Kinder suchen." },
-              { title: "Unternehmer & Profis", desc: "Selbstständige und Angestellte, die ihre Expertise in Saudi-Arabien einbringen wollen." },
-              { title: "Macher", desc: "Menschen, die bauen und gestalten wollen – nicht nur fliehen." }
-            ].map((item, idx) => (
-              <div key={idx} className="bg-surface p-8 rounded-lg shadow-sm border border-primary/5 text-center hover:-translate-y-1 transition-transform duration-300">
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 text-primary">
-                  <Users size={24} />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[minmax(200px,auto)]">
+          {/* Large Card - Community */}
+          <FadeIn className="md:col-span-2 md:row-span-2 h-full">
+            <BentoCard 
+              className="bg-[#1A3C34] text-[#FDFBF7] border-none"
+            >
+              <div className="h-full flex flex-col justify-between">
+                <div>
+                  <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center mb-6 text-[#C5A065]">
+                    <Users size={24} />
+                  </div>
+                  <h3 className="text-3xl font-serif mb-4">Das Netzwerk</h3>
+                  <p className="text-gray-300 text-lg leading-relaxed max-w-md">
+                    Triff Familien, Unternehmer und Experten, die bereits vor Ort sind. 
+                    Keine Theorie, sondern gelebte Praxis aus Medina.
+                  </p>
                 </div>
-                <h3 className="text-xl font-serif text-primary mb-3">{item.title}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">{item.desc}</p>
+                <div className="mt-8 grid grid-cols-2 gap-4">
+                  <div className="bg-white/5 p-4 rounded-xl border border-white/10">
+                    <p className="text-2xl font-bold text-[#C5A065] mb-1">24/7</p>
+                    <p className="text-xs text-gray-400">Austausch</p>
+                  </div>
+                  <div className="bg-white/5 p-4 rounded-xl border border-white/10">
+                    <p className="text-2xl font-bold text-[#C5A065] mb-1">100%</p>
+                    <p className="text-xs text-gray-400">Authentisch</p>
+                  </div>
+                </div>
               </div>
-            ))}
-          </div>
-          <p className="text-center text-muted-foreground mt-12 text-sm italic">
-            „Diese Community ist kein Ort für Panikmache oder falsche Versprechen.“
-          </p>
-        </FadeIn>
-      </Section>
+            </BentoCard>
+          </FadeIn>
 
-      {/* SECTION 4: Was dich erwartet */}
-      <Section className="bg-surface">
-        <div className="flex flex-col lg:flex-row gap-16 items-start">
-          <div className="lg:w-1/3">
-            <FadeIn>
-              <h2 className="text-3xl md:text-4xl font-serif text-primary mb-6 leading-tight">
-                Was dich in der <br/>Community erwartet
-              </h2>
-              <p className="text-muted-foreground mb-8">
-                Ein strukturierter Raum für Wissen, Austausch und echte Unterstützung auf deinem Weg.
-              </p>
-              <Button variant="primary">
-                Zugang anfragen <ArrowRight size={16} />
-              </Button>
-            </FadeIn>
-          </div>
-          
-          <div className="lg:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[
-              { icon: BookOpen, title: "Orientierung & Wissen", desc: "Ehrliche Diskussionen und klare Fakten statt Gerüchte." },
-              { icon: ShieldCheck, title: "Visa & Aufenthalt", desc: "Erfahrungsbasiertes Wissen zu Iqama, Visum und Recht." },
-              { icon: Home, title: "Leben in Medina", desc: "Realistische Einblicke in Wohnen, Alltag und Nachbarschaft." },
-              { icon: Users, title: "Familie & Schule", desc: "Alles zu Schulen, Kindererziehung und Familienleben." },
-              { icon: Briefcase, title: "Arbeit & Business", desc: "Jobmarkt, Firmengründung und Einkommensmöglichkeiten." },
-              { icon: MapPin, title: "Erfahrungen vor Ort", desc: "Direkter Austausch mit Menschen, die den Weg bereits gegangen sind." },
-            ].map((item, idx) => (
-              <FadeIn key={idx} delay={idx * 0.1}>
-                <div className="flex gap-4 p-4 rounded-lg hover:bg-accent/20 transition-colors">
-                  <div className="mt-1 text-secondary">
-                    <item.icon size={24} />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-primary mb-1">{item.title}</h3>
-                    <p className="text-sm text-muted-foreground">{item.desc}</p>
-                  </div>
+          {/* Tall Card - Responsibility */}
+          <FadeIn className="md:row-span-2 h-full">
+            <BentoCard 
+              title="Verantwortung" 
+              subtitle="Hijrah ist kein Urlaub. Wir fokussieren uns auf Visa, Arbeit und langfristige Sicherheit."
+              icon={ShieldCheck}
+              className="bg-[#F3F1EB]"
+            >
+               <div className="mt-6 space-y-4">
+                 {['Visum & Iqama', 'Immobilienmarkt', 'Schulsystem', 'Krankenversicherung'].map((item, i) => (
+                   <div key={i} className="flex items-center gap-3 bg-white p-3 rounded-lg shadow-sm">
+                     <CheckCircle2 size={16} className="text-[#C5A065]" />
+                     <span className="text-sm font-medium text-[#1A3C34]">{item}</span>
+                   </div>
+                 ))}
+               </div>
+            </BentoCard>
+          </FadeIn>
+
+          {/* Wide Card - Vision */}
+          <FadeIn className="md:col-span-2 h-full">
+             <BentoCard 
+               className="flex flex-row items-center gap-8 relative overflow-hidden group"
+             >
+                <div className="flex-1 relative z-10">
+                  <h3 className="text-xl font-serif text-[#1A3C34] font-medium mb-2">Für Macher & Visionäre</h3>
+                  <p className="text-[#6B7C76] text-sm leading-relaxed">
+                    Ob du remote arbeitest, ein Business gründest oder eine Anstellung suchst – 
+                    hier findest du Wege, deinen Lebensunterhalt halal zu sichern.
+                  </p>
                 </div>
-              </FadeIn>
-            ))}
-          </div>
+                <div className="hidden sm:block w-32 h-32 bg-[#C5A065]/10 rounded-full absolute -right-10 -bottom-10 group-hover:scale-150 transition-transform duration-500"></div>
+                <div className="relative z-10 bg-[#FDFBF7] p-4 rounded-full border border-[#1A3C34]/10 text-[#1A3C34]">
+                   <Briefcase size={28} />
+                </div>
+             </BentoCard>
+          </FadeIn>
+
+           {/* Small Card - Education */}
+           <FadeIn className="h-full">
+            <BentoCard 
+              title="Wissen" 
+              icon={BookOpen}
+              className="bg-white"
+            >
+              <p className="text-sm text-[#6B7C76]">Zugang zu Guides, Checklisten und Experten-Webinaren.</p>
+            </BentoCard>
+          </FadeIn>
         </div>
       </Section>
 
-      {/* SECTION 5: Haltung & Werte */}
-      <Section className="bg-primary text-white text-center py-32">
+      {/* SECTION 3: TESTIMONIALS / QUOTE (Glassmorphism Style) */}
+      <Section className="bg-[#1A3C34] relative overflow-hidden py-32">
+         {/* Background decoration */}
+         <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
+           <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-[#C5A065] rounded-full mix-blend-multiply filter blur-[128px] opacity-20"></div>
+           <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-[#2C5F52] rounded-full mix-blend-multiply filter blur-[128px] opacity-40"></div>
+         </div>
+
+         <div className="relative z-10 max-w-4xl mx-auto text-center">
+           <FadeIn>
+             <div className="inline-block p-4 rounded-full bg-white/5 backdrop-blur-sm border border-white/10 mb-8">
+               <Star className="text-[#C5A065] fill-[#C5A065]" size={24} />
+             </div>
+             <blockquote className="text-3xl md:text-5xl font-serif text-white leading-tight mb-8">
+               "Diese Community ist kein Ort für Panikmache oder falsche Versprechen. Sie ist ein Anker für Realismus."
+             </blockquote>
+             <cite className="text-[#C5A065] not-italic font-medium tracking-wide uppercase text-sm">
+               — Aus dem Community Manifest
+             </cite>
+           </FadeIn>
+         </div>
+      </Section>
+
+      {/* SECTION 4: CTA CARD */}
+      <Section>
         <FadeIn>
-          <div className="max-w-3xl mx-auto space-y-8">
-            <Heart size={48} className="mx-auto text-secondary mb-6" />
-            <h2 className="text-3xl md:text-5xl font-serif leading-tight">
-              Hijrah ist keine Flucht. <br/>
-              Hijrah ist Verantwortung.
-            </h2>
-            <p className="text-xl text-gray-300 leading-relaxed font-light">
-              Diese Community steht für Klarheit statt Illusion und Gemeinschaft statt Alleingang.
-              Wir begleiten dich dabei, diesen Schritt mit Bewusstsein und Planung zu gehen.
-            </p>
-            <div className="pt-8">
-              <span className="inline-block border-t border-secondary pt-4 text-secondary uppercase tracking-widest text-sm font-medium">
-                Umrah ist Ibadah. Hijrah ist Verantwortung.
-              </span>
+          <div className="bg-[#F3F1EB] rounded-[3rem] p-8 md:p-20 text-center border border-[#1A3C34]/5 relative overflow-hidden">
+            <div className="relative z-10 max-w-2xl mx-auto">
+              <h2 className="text-4xl md:text-5xl font-serif text-[#1A3C34] mb-6">
+                Bereit für den nächsten Schritt?
+              </h2>
+              <p className="text-lg text-[#6B7C76] mb-10">
+                Werde Teil einer Bewegung von Muslimen, die ihre Zukunft aktiv gestalten.
+                Sicher, strukturiert und gemeinsam.
+              </p>
+              <Button className="w-full sm:w-auto mx-auto text-lg px-12 py-5 shadow-2xl shadow-[#1A3C34]/20">
+                Jetzt Zugang anfragen
+              </Button>
+              <p className="mt-8 text-xs text-[#6B7C76] uppercase tracking-wider">
+                Exklusiver Zugang via Skool
+              </p>
             </div>
+            
+            {/* Decoration Circles */}
+            <div className="absolute top-0 left-0 w-64 h-64 bg-white rounded-full mix-blend-overlay filter blur-3xl opacity-50 -translate-x-1/2 -translate-y-1/2"></div>
+            <div className="absolute bottom-0 right-0 w-64 h-64 bg-[#C5A065] rounded-full mix-blend-multiply filter blur-3xl opacity-10 translate-x-1/2 translate-y-1/2"></div>
           </div>
         </FadeIn>
       </Section>
 
-      {/* SECTION 6: Video Section (Placeholder) */}
-      <Section className="bg-muted">
-        <FadeIn>
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="aspect-video bg-gray-200 rounded-xl shadow-lg flex items-center justify-center relative group cursor-pointer overflow-hidden mb-8">
-               {/* Video Placeholder */}
-               <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-all"></div>
-               <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
-                 <Play size={32} className="text-primary ml-1" />
-               </div>
-            </div>
-            <p className="text-lg text-primary font-medium">
-              „Ein paar Worte zur Vision dieser Community und warum Medina mehr ist als ein Ort.“
-            </p>
+      {/* FOOTER */}
+      <footer className="border-t border-[#1A3C34]/10 py-12 bg-white">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="text-center md:text-left">
+            <h3 className="font-serif text-xl text-[#1A3C34] font-bold">Auswandern nach Medina</h3>
+            <p className="text-sm text-[#6B7C76] mt-1">Verantwortung leben.</p>
           </div>
-        </FadeIn>
-      </Section>
-
-      {/* SECTION 7: CTA - Skool Community */}
-      <Section className="bg-surface py-32">
-        <FadeIn>
-          <div className="max-w-4xl mx-auto bg-accent/20 rounded-2xl p-8 md:p-16 text-center border border-primary/5">
-            <h2 className="text-4xl md:text-5xl font-serif text-primary mb-6">
-              Teil der Community werden
-            </h2>
-            <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto">
-              Wenn du dich ernsthaft mit dem Gedanken an Hijrah beschäftigst,
-              findest du hier Austausch, Klarheit und ehrliche Erfahrungen.
-            </p>
-            <Button variant="primary" className="text-lg px-10 py-5 mx-auto w-full md:w-auto">
-              Jetzt zur Skool Community
-            </Button>
-            <p className="mt-6 text-xs text-muted-foreground uppercase tracking-wider">
-              Geschlossene Community · Respektvoll · Moderiert
-            </p>
+          <div className="flex gap-8 text-sm text-[#6B7C76]">
+            <a href="#" className="hover:text-[#1A3C34] transition-colors">Impressum</a>
+            <a href="#" className="hover:text-[#1A3C34] transition-colors">Datenschutz</a>
+            <a href="#" className="hover:text-[#1A3C34] transition-colors">Login</a>
           </div>
-        </FadeIn>
-      </Section>
-
-      {/* SECTION 8: Footer */}
-      <footer className="bg-white border-t border-gray-100 py-12">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <h3 className="font-serif text-2xl text-primary mb-2">Auswandern nach Medina</h3>
-          <p className="text-muted-foreground mb-8">Eine Community für Muslime, die Verantwortung leben.</p>
-          <div className="flex justify-center gap-6 text-sm text-gray-400">
-            <a href="#" className="hover:text-primary transition-colors">Impressum</a>
-            <a href="#" className="hover:text-primary transition-colors">Datenschutz</a>
-          </div>
-          <p className="mt-8 text-xs text-gray-300">© {new Date().getFullYear()} Auswandern nach Medina</p>
         </div>
       </footer>
 
