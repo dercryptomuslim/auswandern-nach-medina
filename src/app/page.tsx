@@ -221,7 +221,7 @@ export default function LandingPage() {
             {/* Ummah Consulting Logo */}
             <div className="relative h-12 w-40 flex items-center justify-center hover:scale-105 transition-transform">
                <Image 
-                 src="/ummah-consulting-logo.svg" 
+                 src="/ummah-consulting-logo.jpg" 
                  alt="Ummah Consulting" 
                  width={160} 
                  height={60} 
