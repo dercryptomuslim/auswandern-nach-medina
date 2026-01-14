@@ -12,6 +12,7 @@ import {
   CheckCircle2
 } from "lucide-react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -199,7 +200,40 @@ export default function LandingPage() {
         </div>
       </div>
 
+      {/* SECTION 1.5: PARTNERS */}
+      <Section className="py-12 border-b border-[#1A3C34]/5">
+        <FadeIn>
+          <p className="text-center text-sm text-[#6B7C76] uppercase tracking-widest mb-8 font-medium">
+            In Partnerschaft mit
+          </p>
+          <div className="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-80 grayscale hover:grayscale-0 transition-all duration-500">
+            {/* UmrahCheck Logo */}
+            <div className="relative h-12 w-40 flex items-center justify-center hover:scale-105 transition-transform">
+               <Image 
+                 src="/umrahcheck-logo.png" 
+                 alt="UmrahCheck" 
+                 width={160} 
+                 height={60} 
+                 className="object-contain max-h-12"
+               />
+            </div>
+            
+            {/* Ummah Consulting Logo */}
+            <div className="relative h-12 w-40 flex items-center justify-center hover:scale-105 transition-transform">
+               <Image 
+                 src="/ummah-consulting-logo.svg" 
+                 alt="Ummah Consulting" 
+                 width={160} 
+                 height={60} 
+                 className="object-contain max-h-12"
+               />
+            </div>
+          </div>
+        </FadeIn>
+      </Section>
+
       {/* SECTION 2: BENTO GRID FEATURES */}
+
       <Section id="features">
         <div className="text-center max-w-3xl mx-auto mb-20">
           <FadeIn>
