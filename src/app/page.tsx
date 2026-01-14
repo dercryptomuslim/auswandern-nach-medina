@@ -5,11 +5,8 @@ import {
   Users, 
   MapPin, 
   BookOpen, 
-  Home, 
   Briefcase, 
   ShieldCheck, 
-  ArrowRight, 
-  Play,
   Heart,
   Star,
   CheckCircle2
@@ -29,8 +26,12 @@ function Button({
   children, 
   variant = "primary", 
   className = "", 
+  href,
   ...props 
-}: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "secondary" | "outline" | "ghost" }) {
+}: React.ButtonHTMLAttributes<HTMLButtonElement> & React.AnchorHTMLAttributes<HTMLAnchorElement> & { 
+  variant?: "primary" | "secondary" | "outline" | "ghost",
+  href?: string
+}) {
   const variants = {
     primary: "bg-[#1A3C34] text-[#FDFBF7] hover:bg-[#142F29] shadow-lg hover:shadow-xl hover:-translate-y-0.5",
     secondary: "bg-[#C5A065] text-white hover:bg-[#B08D55] shadow-md hover:shadow-lg",
@@ -38,15 +39,22 @@ function Button({
     ghost: "bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20",
   };
 
+  const classes = cn(
+    "px-8 py-4 rounded-xl transition-all duration-300 font-medium text-base tracking-wide flex items-center justify-center gap-2 active:scale-95",
+    variants[variant],
+    className
+  );
+
+  if (href) {
+    return (
+      <a href={href} className={classes} target="_blank" rel="noopener noreferrer" {...props as React.AnchorHTMLAttributes<HTMLAnchorElement>}>
+        {children}
+      </a>
+    );
+  }
+
   return (
-    <button 
-      className={cn(
-        "px-8 py-4 rounded-xl transition-all duration-300 font-medium text-base tracking-wide flex items-center justify-center gap-2 active:scale-95",
-        variants[variant],
-        className
-      )} 
-      {...props}
-    >
+    <button className={classes} {...props as React.ButtonHTMLAttributes<HTMLButtonElement>}>
       {children}
     </button>
   );
@@ -88,9 +96,9 @@ function BentoCard({
   );
 }
 
-function Section({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+function Section({ children, className = "", id = "" }: { children: React.ReactNode; className?: string; id?: string }) {
   return (
-    <section className={cn("py-24 px-6 md:px-12 lg:px-24", className)}>
+    <section id={id} className={cn("py-24 px-6 md:px-12 lg:px-24", className)}>
       <div className="max-w-7xl mx-auto">
         {children}
       </div>
@@ -115,6 +123,8 @@ function FadeIn({ children, delay = 0, className = "" }: { children: React.React
 // --- Page Content ---
 
 export default function LandingPage() {
+  const skoolLink = "https://www.skool.com/auswandern-nach-medina-1478/about?ref=e251dbf7e06b40049b5cca8edde93dd1";
+
   return (
     <main className="min-h-screen flex flex-col bg-[#FDFBF7] selection:bg-[#C5A065] selection:text-white">
       
@@ -142,10 +152,10 @@ export default function LandingPage() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button className="w-full sm:w-auto">
+              <Button href={skoolLink} className="w-full sm:w-auto">
                 Zur Community beitreten
               </Button>
-              <Button variant="outline" className="w-full sm:w-auto">
+              <Button href="#features" variant="outline" className="w-full sm:w-auto" target="_self">
                 Mehr erfahren
               </Button>
             </div>
@@ -190,7 +200,7 @@ export default function LandingPage() {
       </div>
 
       {/* SECTION 2: BENTO GRID FEATURES */}
-      <Section>
+      <Section id="features">
         <div className="text-center max-w-3xl mx-auto mb-20">
           <FadeIn>
             <h2 className="text-3xl md:text-5xl font-serif text-[#1A3C34] mb-6">Alles für deinen Weg.</h2>
@@ -318,7 +328,7 @@ export default function LandingPage() {
                 Werde Teil einer Bewegung von Muslimen, die ihre Zukunft aktiv gestalten.
                 Sicher, strukturiert und gemeinsam.
               </p>
-              <Button className="w-full sm:w-auto mx-auto text-lg px-12 py-5 shadow-2xl shadow-[#1A3C34]/20">
+              <Button href={skoolLink} className="w-full sm:w-auto mx-auto text-lg px-12 py-5 shadow-2xl shadow-[#1A3C34]/20">
                 Jetzt Zugang anfragen
               </Button>
               <p className="mt-8 text-xs text-[#6B7C76] uppercase tracking-wider">
@@ -343,7 +353,7 @@ export default function LandingPage() {
           <div className="flex gap-8 text-sm text-[#6B7C76]">
             <a href="#" className="hover:text-[#1A3C34] transition-colors">Impressum</a>
             <a href="#" className="hover:text-[#1A3C34] transition-colors">Datenschutz</a>
-            <a href="#" className="hover:text-[#1A3C34] transition-colors">Login</a>
+            <a href={skoolLink} className="hover:text-[#1A3C34] transition-colors" target="_blank" rel="noopener noreferrer">Login</a>
           </div>
         </div>
       </footer>
