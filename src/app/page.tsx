@@ -237,17 +237,6 @@ export default function LandingPage() {
                  className="object-contain max-h-12"
                />
             </div>
-            
-            {/* Skool Logo */}
-            <div className="relative h-12 w-40 flex items-center justify-center hover:scale-105 transition-transform">
-               <Image 
-                 src="/skool-logo.svg" 
-                 alt="Skool Community" 
-                 width={160} 
-                 height={60} 
-                 className="object-contain max-h-12"
-               />
-            </div>
           </div>
         </FadeIn>
       </Section>
