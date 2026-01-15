@@ -175,16 +175,25 @@ export default function LandingPage() {
         </div>
 
         {/* Right: Visual */}
-        <div className="relative h-[50vh] lg:h-auto order-1 lg:order-2 overflow-hidden bg-[#1A3C34]">
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1565552629477-ff441f77d338?q=80&w=2574&auto=format&fit=crop')] bg-cover bg-center opacity-60 mix-blend-overlay"></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-[#1A3C34] via-transparent to-transparent lg:bg-gradient-to-l"></div>
+        <div className="relative h-[50vh] lg:h-auto order-1 lg:order-2 overflow-hidden bg-[#1A3C34] flex items-center justify-center">
+          <div className="absolute inset-0">
+             <Image 
+               src="/hero-mosque.png" 
+               alt="Prophetenmoschee" 
+               fill
+               className="object-cover object-center opacity-80 mix-blend-overlay lg:mix-blend-normal lg:opacity-100"
+               priority
+             />
+             <div className="absolute inset-0 bg-gradient-to-t from-[#1A3C34] via-[#1A3C34]/20 to-transparent lg:hidden"></div>
+             <div className="absolute inset-0 bg-[#1A3C34]/20 lg:bg-[#1A3C34]/10"></div>
+          </div>
           
           {/* Floating Glass Card */}
           <motion.div 
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.5, duration: 1 }}
-            className="absolute bottom-12 left-12 right-12 lg:bottom-24 lg:left-24 lg:right-auto lg:w-80 bg-white/10 backdrop-blur-xl border border-white/20 p-6 rounded-2xl shadow-2xl text-white hidden md:block"
+            className="absolute bottom-12 left-12 right-12 lg:bottom-24 lg:left-24 lg:right-auto lg:w-80 bg-white/10 backdrop-blur-xl border border-white/20 p-6 rounded-2xl shadow-2xl text-white hidden md:block z-10"
           >
             <div className="flex items-start gap-4">
               <div className="p-3 bg-[#C5A065] rounded-xl">
@@ -223,6 +232,17 @@ export default function LandingPage() {
                <Image 
                  src="/ummah-consulting-logo.jpg" 
                  alt="Ummah Consulting" 
+                 width={160} 
+                 height={60} 
+                 className="object-contain max-h-12"
+               />
+            </div>
+            
+            {/* Skool Logo */}
+            <div className="relative h-12 w-40 flex items-center justify-center hover:scale-105 transition-transform">
+               <Image 
+                 src="/skool-logo.svg" 
+                 alt="Skool Community" 
                  width={160} 
                  height={60} 
                  className="object-contain max-h-12"
