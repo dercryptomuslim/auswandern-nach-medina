@@ -374,9 +374,20 @@ export default function LandingPage() {
               <Button href={skoolLink} className="w-full sm:w-auto mx-auto text-lg px-12 py-5 shadow-2xl shadow-[#1A3C34]/20">
                 Jetzt Zugang anfragen
               </Button>
-              <p className="mt-8 text-xs text-[#6B7C76] uppercase tracking-wider">
-                Exklusiver Zugang via Skool
-              </p>
+              <div className="mt-8 flex flex-col items-center gap-3">
+                <p className="text-xs text-[#6B7C76] uppercase tracking-wider">
+                  Exklusiver Zugang via
+                </p>
+                <a href={skoolLink} target="_blank" rel="noopener noreferrer" className="opacity-80 hover:opacity-100 transition-opacity">
+                  <Image 
+                    src="/skool-logo.svg" 
+                    alt="Skool Community" 
+                    width={100} 
+                    height={40} 
+                    className="h-8 w-auto"
+                  />
+                </a>
+              </div>
             </div>
             
             {/* Decoration Circles */}
