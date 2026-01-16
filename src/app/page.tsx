@@ -161,16 +161,6 @@ export default function LandingPage() {
               </Button>
             </div>
 
-            <div className="mt-12 flex items-center gap-4 text-sm text-[#6B7C76]">
-              <div className="flex -space-x-3">
-                {[1,2,3,4].map(i => (
-                  <div key={i} className="w-10 h-10 rounded-full border-2 border-[#FDFBF7] bg-gray-200 flex items-center justify-center text-xs overflow-hidden">
-                    <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i}`} alt="Avatar" />
-                  </div>
-                ))}
-              </div>
-              <p>Bereits 500+ Mitglieder</p>
-            </div>
           </FadeIn>
         </div>
 
